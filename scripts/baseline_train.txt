@@ -1,0 +1,1 @@
+python segment.py --gpu 0 --out exp/Ablative_Study/dense_base --scale  --size 480 --lr 1e-4 --n-labeled 3000 --consistency 1.0 --consistency_rampup 600 --epochs 10   --batch-size 20  --num-class 2  --baseline --val-iteration 150

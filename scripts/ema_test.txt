@@ -1,0 +1,1 @@
+python segment.py --gpu 0 --out exp/public-mix/final_60  --scale  --lr 1e-4 --n-labeled 20 --consistency 1.0 --consistency_rampup 600 --epochs 800   --batch-size 5 --num-class 2  --val-iteration 10  --resume exp/dence_ce/CDCL_600/model_best.pth.tar --test --output test/dence_ce/CDCL_600

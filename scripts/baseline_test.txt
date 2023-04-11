@@ -1,0 +1,1 @@
+python segment.py --gpu 0 --out exp/skin/skin2450_tcsm  --scale  --lr 1e-4 --n-labeled 2450 --consistency 1.0 --consistency_rampup 600 --epochs 800   --batch-size 20 --num-class 2  --val-iteration 10  --resume exp/Ablative_Study/dense_base/model_best.pth.tar --test --output test/Ablative_Study/dense_base --baseline
