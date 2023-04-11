@@ -7,14 +7,14 @@
 * Install Pytorch 1.11.0 and CUDA 10.0
 * Clone this repo
 ```
-git clone https://github.com/xmengli999/TCSM
-cd TCSM
+git clone https://github.com/rxy1234/CLSD
+cd CLSD
 ```
 
 ## Data Preparation
 * Download [CRAG dataset](https://warwick.ac.uk/fac/cross_fac/tia/data/mildnet) <br/>
 * Put the data under `./data/`
-* Divide the dataset into six folders
+* Divide the dataset into six folders `myTest_Data ` `myTest_Label ` `myTraining_Data ` `myTraining_Label ` `myValid_Data ` `myValid_Label `
 * Fill the folder `myTest_Label `with images with pixel values of all 0 corresponding to the folder `myTest_Data `
 
 ## Train
