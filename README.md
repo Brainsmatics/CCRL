@@ -1,4 +1,4 @@
-##  CLSDNet：Simple Contrastive Representation Learning for Semi-supervised  Segmentation of Cellular Nuclei in Immunofluorescence Staining  
+##  Cross Comparison Representation Learning for Semi-supervised Segmentation of Cellular Nuclei in Immunofluorescence Staining
 
 
 
@@ -7,7 +7,7 @@
 * Install Pytorch 1.11.0 and CUDA 10.0
 * Clone this repo
 ```
-git clone https://github.com/rxy1234/CLSD
+git clone https://github.com/rxy1234/CCRL
 cd CLSD
 ```
 
