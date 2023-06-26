@@ -24,6 +24,10 @@ cd CLSD
 * Paste the copied operation command and run it
 
 ## Evaluate
+* Download [Test dataset](https://pan.baidu.com/s/16VGSDwuCUk1QDT4AUcyMLg?pwd=w2zv ) <br/>
+* Put the test data under `./data/`
+* Download [Parameter](https://pan.baidu.com/s/1I643oztfFyZJXXKUW4IIRg?pwd=qbxt ) <br/>
+* Put the parameter under `./exp/`
 * Open `ema_test.txt ` in the folder `scripts `
 * Copy content after modifying parameters
 * Open the terminal and  `cd   'the path of the current project' `
