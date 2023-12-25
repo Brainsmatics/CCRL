@@ -13,6 +13,8 @@ cd CLSD
 
 ## Data Preparation
 * Download [CRAG dataset](https://warwick.ac.uk/fac/cross_fac/tia/data/mildnet) <br/>
+* Download [ISC dataset](https://pan.baidu.com/s/1QqyUsJTwVCs-1hrT0fsuaw?pwd=xec0 
+) <br/>
 * Put the data under `./data/`
 * Divide the dataset into six folders `myTest_Data ` `myTest_Label ` `myTraining_Data ` `myTraining_Label ` `myValid_Data ` `myValid_Label `
 * Fill the folder `myTest_Label `with images with pixel values of all 0 corresponding to the folder `myTest_Data `
