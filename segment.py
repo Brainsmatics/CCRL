@@ -109,7 +109,7 @@ use_cuda = torch.cuda.is_available()
 # cudnn.benchmark=True
 # cudnn.deterministic = True
 
-#强制同步
+
 os.environ['CUDA_LAUNCH_BLOCKING']='1'
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
@@ -181,8 +181,6 @@ def main():
 
     labeled_trainloader = data.DataLoader(train_labeled_set, batch_size=args.batch_size, shuffle=True,
                                           num_workers=2, drop_last=True)
-    # print(type(labeled_trainloader))
-    # print(labeled_trainloader)
 
     if args.baseline:
         unlabeled_trainloader = None
@@ -210,24 +208,14 @@ def main():
     model = create_model()
     ema_model = create_model(ema=True)
 
-    # freeze all layers but the last fc
-    # for name, param in model.named_parameters():
-    #     if name not in ['fc.weight', 'fc.bias']:
-    #         param.requires_grad = False         #除了最后的fc，其他层不训练
-
-    # init the fc layer
-    # model.fc.weight.data.normal_(mean=0.0, std=0.01)
-    # model.fc.bias.data.zero_()
 
 
 
-    # cudnn.benchmark = True
 
     print('    Total params: %.2fM' % (sum(p.numel() for p in model.parameters()) / 1000000.0))
 
     criterion = nn.CrossEntropyLoss(weight=torch.FloatTensor([1.93, 8.06]).cuda())
-    # criterion = BinaryDiceLoss().cuda()
-    # criterion = nn.BCELoss(weight=torch.FloatTensor([1.93, 8.06])).cuda()
+
 
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
     init_lr = args.lr * args.batch_size / args.batch_size  # lr = 0.5
@@ -241,39 +229,7 @@ def main():
         print("epoch ", checkpoint['epoch'])
         model.load_state_dict(checkpoint['state_dict'])
         optimizer.load_state_dict(checkpoint['optimizer'])
-    # Pre-train
-    if args.pre_train:
-        if os.path.isfile(args.pre_train):
-            print("=> loading checkpoint '{}'".format(args.pre_train))
-            checkpoint = torch.load(args.pre_train, map_location="cpu")
-
-            # rename moco pre-trained keys
-            state_dict = checkpoint['state_dict']
-
-            for k in list(state_dict.keys()):
-                # retain only encoder up to before the embedding layer
-                if k.startswith('predictor') or k.startswith('projector'):
-                    del state_dict[k]
-
-            args.start_epoch = 0
-            model.load_state_dict(state_dict, strict=False)
-
-            print("=> loaded pre-trained model '{}'".format(args.pre_train))
-        else:
-            print("=> no checkpoint found at '{}'".format(args.pre_train))
-
-    if args.evaluate:  # 评价
-        val_loss, val_result = multi_validate(val_loader, ema_model, criterion, 0, use_cuda, args)
-        print("val_loss", val_loss)
-        print("Val ema_model : JA, AC, DI, SE, SP \n")
-        print(", ".join("%.4f" % f for f in val_result))
-
-        val_loss, val_result = multi_validate(val_loader, model, criterion, 0, use_cuda, args)
-        print("val_loss", val_loss)
-        print("Val model: JA, AC, DI, SE, SP \n")
-        print(", ".join("%.4f" % f for f in val_result))
-        return
-
+    
     if args.test:  
         if not os.path.isdir(args.output):
             mkdir_p(args.output)
@@ -299,8 +255,8 @@ def main():
                 y = targets.cpu().detach().numpy()
                 results = post_process_evaluate(x, y, name, args)
 
-                # 输出图片
-                # print("x_shape:",x.shape)#(batch, 2, 1360, 1360)
+                
+                
 
                 z = (z * 255).astype(np.uint8)
 
@@ -347,7 +303,7 @@ def train_meanteacher(labeled_trainloader, unlabeled_trainloader, model, ema_mod
     else:
         assert False, args.consistency_type
 
-    # switch to train mode
+    
     model.train()
     ema_model.train()
     LOSS = 0
@@ -359,8 +315,7 @@ def train_meanteacher(labeled_trainloader, unlabeled_trainloader, model, ema_mod
             labeled_train_iter = iter(labeled_trainloader)
             inputs_x, targets_x, name_x = labeled_train_iter.next()
 
-        # print(targets_x.shape)# 5 224 224
-        # print(inputs_x.shape)
+        
         inputs_x, targets_x = inputs_x.cuda(), targets_x.cuda(non_blocking=True)
 
         if not args.baseline:
@@ -371,19 +326,19 @@ def train_meanteacher(labeled_trainloader, unlabeled_trainloader, model, ema_mod
                 inputs_u, inputs_u2 = unlabeled_train_iter.next()
 
             if use_cuda:
-                # targets_x[targets_x == 255] = 1
+               
                 inputs_u = inputs_u.cuda()
                 inputs_u2 = inputs_u2.cuda()
 
             with torch.no_grad():
 
 
-                # tcsm
+               
                 inputs_u2_noise = transforms_for_noise(inputs_u2, 0.5)
 
                 inputs_u2_noise, rot_mask, flip_mask = transforms_for_rot(inputs_u2_noise)
 
-                # add scale
+               
                 if args.scale:
                     inputs_u2_noise, scale_mask = transforms_for_scale(inputs_u2_noise, args.size)
 
@@ -399,33 +354,29 @@ def train_meanteacher(labeled_trainloader, unlabeled_trainloader, model, ema_mod
                     outputs_u_ema, scale_mask = transforms_back_scale(outputs_u_ema, scale_mask, args.size)
                     outputs_u = postprocess_scale(outputs_u, scale_mask, args.size)
 
-                # tcsm back: modify ema output
+               
                 outputs_u_ema = transforms_back_rot(outputs_u_ema, rot_mask, flip_mask)
 
 
 
 
-        # iter_num
+    
         iter_num = batch_idx + epoch * args.val_iteration
-        # lr = adjust_learning_rate(optimizer, epoch, batch_idx, args.val_iteration)
+       
 
-        # labeled data
+     
         logits_x = model(inputs_x)[0]
 
         outputs_soft = F.softmax(logits_x, dim=1)
-        # print(outputs_soft)
-        # print("================================================")
+       
         index = torch.where(targets_x>0)
         targets_x[index]=1.0
-        # print(targets_x)
-
-        # Lx = criterion(outputs_soft,targets_x.long())
-        #  = dice_loss()
+     
         mse = nn.MSELoss().cuda()
         dice_loss=BinaryDiceLoss().cuda()
         Lx_dice=dice_loss(outputs_soft[:, 1, :, :], targets_x.long())
 
-        # Lx = 0.5 * (Lx + Lx_dice)
+     
         Lx = Lx_dice
         # unlabeled data
         if not args.baseline:
@@ -440,8 +391,8 @@ def train_meanteacher(labeled_trainloader, unlabeled_trainloader, model, ema_mod
             p1,p2,z1,z2 = outputs[1],outputs_ema[1],outputs[2],outputs_ema[2]
             Lc = (mse(p1, z2).mean() + mse(p2, z1).mean()) * 0.5
 
-            loss = Lx + Lu + Lc
-            # loss = Lx + Lu
+            loss = 0.5*Lx + 0.25*Lu + 0.25*Lc
+         
         else:
             loss = Lx
 
