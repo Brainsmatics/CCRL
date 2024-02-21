@@ -13,7 +13,6 @@ cd CLSD
 
 ## Data Preparation
 * Download [CRAG dataset](https://warwick.ac.uk/fac/cross_fac/tia/data/mildnet) <br/>
-) <br/>
 * Put the data under `./data/`
 * Divide the dataset into six folders `myTest_Data ` `myTest_Label ` `myTraining_Data ` `myTraining_Label ` `myValid_Data ` `myValid_Label `
 * Fill the folder `myTest_Label `with images with pixel values of all 0 corresponding to the folder `myTest_Data `
@@ -33,7 +32,7 @@ cd CLSD
 * Copy content after modifying parameters
 * Open the terminal and  `cd   'the path of the current project' `
 * Paste the copied operation command and run it
-The data is available upon request.
+* The data is available upon request
 
 ## Acknowledgement
 Some code is reused from the [Pytorch implementation of mean teacher](https://github.com/CuriousAI/mean-teacher). 
